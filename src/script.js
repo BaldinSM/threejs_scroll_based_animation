@@ -1,6 +1,7 @@
 import "./style.css";
 import * as THREE from "three";
 import * as dat from "lil-gui";
+import gsap from "gsap";
 
 /**
  * Debug
@@ -152,9 +153,20 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 //scroll
 let scrollY = window.scrollY;
+let currentSection = 0;
 
 window.addEventListener("scroll", () => {
   scrollY = window.scrollY;
+
+  const newSection = Math.round(scrollY / sizes.height);
+
+  if (newSection != currentSection) {
+    currentSection = newSection;
+
+    gsap.to();
+  }
+
+  console.log(newSection);
   // console.log(scrollY);
 });
 
