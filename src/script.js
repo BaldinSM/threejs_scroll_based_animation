@@ -65,12 +65,12 @@ const knotTorus = new THREE.Mesh(
 knotTorus.position.y = -objectsDistance * 2;
 knotTorus.position.x = 1.5;
 
-const isoSphere = new THREE.Mesh(
+const cylinder = new THREE.Mesh(
   new THREE.CylinderGeometry(1, 0.5, 1, 12),
   material
 );
-isoSphere.position.x = 1.5;
-scene.add(knotTorus, isoSphere);
+cylinder.position.x = 1.5;
+scene.add(knotTorus, cylinder);
 
 //particles
 
@@ -153,17 +153,42 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 //scroll
 let scrollY = window.scrollY;
-let currentSection = 0;
+// let currentSection = 0;
 
 window.addEventListener("scroll", () => {
   scrollY = window.scrollY;
 
   const newSection = Math.round(scrollY / sizes.height);
 
-  if (newSection != currentSection) {
-    currentSection = newSection;
-
-    gsap.to();
+  if (newSection === 0) {
+    console.log(cylinder.name);
+    gsap.to(cylinder.rotation, {
+      duration: 2.4,
+      ease: "power2.inOut",
+      x: "+= 4",
+      y: "+= 4",
+    });
+  }
+  if (newSection === 1) {
+    for (let i = 0; i < objcount; i++) {
+      const torus = scene.getObjectByName("littleCube" + i, true);
+      console.log(torus.name);
+      console.log(torus);
+      gsap.to(torus.rotation, {
+        duration: 1.5,
+        ease: "power2.inOut",
+        x: "+=3",
+        y: "+=3",
+      });
+    }
+  }
+  if (newSection === 2) {
+    gsap.to(knotTorus.rotation, {
+      duration: 1.5,
+      ease: "power2.inOut",
+      x: "+= 6",
+      y: "+= 6",
+    });
   }
 
   console.log(newSection);
@@ -202,17 +227,17 @@ const tick = () => {
   cameraGroup.position.y +=
     (parallaxY - cameraGroup.position.y) * 2 * deltaTime;
 
-  knotTorus.rotation.y = Math.sin(elapsedTime);
+  knotTorus.rotation.y += Math.sin(deltaTime);
 
-  isoSphere.rotation.y = 0.4 * elapsedTime;
-  isoSphere.rotation.x = 0.4 * elapsedTime;
-  isoSphere.rotation.z = 0.4 * elapsedTime;
+  cylinder.rotation.y += 0.4 * deltaTime;
+  cylinder.rotation.x += 0.4 * deltaTime;
+  cylinder.rotation.z += 0.4 * deltaTime;
 
   for (let i = 0; i < objcount; i++) {
     const rotCube = scene.getObjectByName("littleCube" + i, true);
-    rotCube.rotation.x = (2 / i) * elapsedTime;
-    rotCube.rotation.y = (2 / i) * elapsedTime;
-    rotCube.rotation.z = (2 / i) * elapsedTime;
+    rotCube.rotation.x += (2 / i) * deltaTime;
+    rotCube.rotation.y += (2 / i) * deltaTime;
+    rotCube.rotation.z += (2 / i) * deltaTime;
   }
   // Render
   renderer.render(scene, camera);
